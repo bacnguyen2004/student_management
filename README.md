@@ -48,7 +48,7 @@ Portfolio project demonstrating full-stack Odoo development: ORM, XML views, sec
 
 ```bash
 # 1. Clone into your Odoo custom addons path
-git clone https://github.com/bacnguyen2004/odoo-student-management.git custom_addons/student_management
+git clone https://github.com/bacnguyen2004/student_management.git custom_addons/student_management
 
 # 2. Ensure addons_path includes custom_addons in odoo.conf
 # addons_path = addons,custom_addons
