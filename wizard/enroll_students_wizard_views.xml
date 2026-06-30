@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_enroll_students_wizard_form" model="ir.ui.view">
+        <field name="name">student_management.enroll.wizard.form</field>
+        <field name="model">student_management.enroll.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Enroll Students">
+                <group>
+                    <group>
+                        <field name="course_id"/>
+                        <field name="enrollment_date"/>
+                    </group>
+                    <group>
+                        <field name="status"/>
+                    </group>
+                </group>
+                <field name="student_ids" nolabel="1" domain="[('active', '=', True)]">
+                    <list>
+                        <field name="student_code"/>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="gender"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_enroll"
+                            string="Enroll"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_enroll_students_wizard" model="ir.actions.act_window">
+        <field name="name">Enroll Students</field>
+        <field name="res_model">student_management.enroll.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

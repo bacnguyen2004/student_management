@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_student_management_root"
+        name="Student Management"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_students"
+        name="Students"
+        parent="menu_student_management_root"
+        action="action_student"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_courses"
+        name="Courses"
+        parent="menu_student_management_root"
+        action="action_course"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_teachers"
+        name="Teachers"
+        parent="menu_student_management_root"
+        action="action_teacher"
+        groups="student_management.group_student_management_staff,student_management.group_student_management_admin"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_classrooms"
+        name="Classes"
+        parent="menu_student_management_root"
+        action="action_classroom"
+        sequence="35"/>
+
+    <menuitem
+        id="menu_enrollments"
+        name="Enrollments"
+        parent="menu_student_management_root"
+        action="action_enrollment"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_enroll_students_wizard"
+        name="Enroll Students"
+        parent="menu_student_management_root"
+        action="action_enroll_students_wizard"
+        groups="student_management.group_student_management_staff,student_management.group_student_management_admin,student_management.group_student_management_teacher"
+        sequence="45"/>
+
+    <record id="action_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">student_management.enrollment</field>
+        <field name="view_mode">graph,pivot,list,calendar</field>
+        <field name="context">{'search_default_studying': 1}</field>
+    </record>
+
+    <menuitem
+        id="menu_dashboard"
+        name="Dashboard"
+        parent="menu_student_management_root"
+        action="action_dashboard"
+        sequence="5"/>
+</odoo>

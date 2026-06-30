@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_template_enrollment_studying" model="mail.template">
+        <field name="name">Enrollment: Started Studying</field>
+        <field name="model_id" ref="model_student_management_enrollment"/>
+        <field name="subject">You started studying {{ object.course_id.name }}</field>
+        <field name="email_to">{{ object.student_email }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello <strong t-out="object.student_id.name"/>,</p>
+                <p>
+                    Your enrollment in
+                    <strong t-out="object.course_id.name"/>
+                    (<span t-out="object.course_id.code"/>)
+                    is now <strong>Studying</strong>.
+                </p>
+                <p>
+                    Teacher:
+                    <span t-out="object.teacher_id.name or 'N/A'"/>
+                </p>
+                <p>Good luck with your course!</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_enrollment_teacher_notify" model="mail.template">
+        <field name="name">Enrollment: Notify Teacher</field>
+        <field name="model_id" ref="model_student_management_enrollment"/>
+        <field name="subject">New enrollment in {{ object.course_id.name }}</field>
+        <field name="email_to">{{ object.teacher_id.email }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello <strong t-out="object.teacher_id.name"/>,</p>
+                <p>
+                    Student
+                    <strong t-out="object.student_id.name"/>
+                    (<span t-out="object.student_id.student_code"/>)
+                    enrolled in your course
+                    <strong t-out="object.course_id.name"/>.
+                </p>
+                <p>
+                    Enrollment date:
+                    <span t-out="object.enrollment_date"/>
+                    — Status:
+                    <span t-out="object.status"/>
+                </p>
+            </div>
+        </field>
+    </record>
+
+</odoo>

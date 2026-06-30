@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Teachers -->
+    <record id="demo_teacher_1" model="student_management.teacher">
+        <field name="name">Nguyen Van An</field>
+        <field name="email">an.nguyen@school.edu</field>
+        <field name="phone">0901111111</field>
+        <field name="specialization">Python Programming</field>
+    </record>
+
+    <record id="demo_teacher_2" model="student_management.teacher">
+        <field name="name">Tran Thi Binh</field>
+        <field name="email">binh.tran@school.edu</field>
+        <field name="phone">0902222222</field>
+        <field name="specialization">English Language</field>
+    </record>
+
+    <record id="demo_teacher_3" model="student_management.teacher">
+        <field name="name">Le Quoc Cuong</field>
+        <field name="email">cuong.le@school.edu</field>
+        <field name="phone">0903333333</field>
+        <field name="specialization">Database Systems</field>
+    </record>
+
+    <!-- Courses -->
+    <record id="demo_course_1" model="student_management.course">
+        <field name="name">Python for Beginners</field>
+        <field name="code">PY101</field>
+        <field name="teacher_id" ref="demo_teacher_1"/>
+        <field name="description">Introduction to Python programming: variables, loops, functions.</field>
+        <field name="fee">2500000</field>
+        <field name="duration">40</field>
+    </record>
+
+    <record id="demo_course_2" model="student_management.course">
+        <field name="name">English Communication A1</field>
+        <field name="code">EN101</field>
+        <field name="teacher_id" ref="demo_teacher_2"/>
+        <field name="description">Basic English speaking and listening skills.</field>
+        <field name="fee">3000000</field>
+        <field name="duration">36</field>
+    </record>
+
+    <record id="demo_course_3" model="student_management.course">
+        <field name="name">Database Design</field>
+        <field name="code">DB201</field>
+        <field name="teacher_id" ref="demo_teacher_3"/>
+        <field name="description">ER diagrams, normalization, SQL basics.</field>
+        <field name="fee">3500000</field>
+        <field name="duration">45</field>
+    </record>
+
+    <record id="demo_course_4" model="student_management.course">
+        <field name="name">Odoo Development</field>
+        <field name="code">ODOO301</field>
+        <field name="teacher_id" ref="demo_teacher_1"/>
+        <field name="description">Build Odoo modules: models, views, security.</field>
+        <field name="fee">5000000</field>
+        <field name="duration">60</field>
+    </record>
+
+    <!-- Students -->
+    <record id="demo_student_1" model="student_management.student">
+        <field name="student_code">STD00001</field>
+        <field name="name">Pham Minh Duc</field>
+        <field name="email">duc.pham@student.edu</field>
+        <field name="phone">0911111111</field>
+        <field name="date_of_birth">2004-03-15</field>
+        <field name="gender">male</field>
+        <field name="address">123 Le Loi, District 1, Ho Chi Minh City</field>
+        <field name="note">Interested in backend development.</field>
+    </record>
+
+    <record id="demo_student_2" model="student_management.student">
+        <field name="student_code">STD00002</field>
+        <field name="name">Hoang Thi Mai</field>
+        <field name="email">mai.hoang@student.edu</field>
+        <field name="phone">0912222222</field>
+        <field name="date_of_birth">2005-07-22</field>
+        <field name="gender">female</field>
+        <field name="address">45 Nguyen Hue, District 1, Ho Chi Minh City</field>
+    </record>
+
+    <record id="demo_student_3" model="student_management.student">
+        <field name="student_code">STD00003</field>
+        <field name="name">Vo Thanh Hung</field>
+        <field name="email">hung.vo@student.edu</field>
+        <field name="phone">0913333333</field>
+        <field name="date_of_birth">2003-11-08</field>
+        <field name="gender">male</field>
+        <field name="address">78 Tran Hung Dao, District 5, Ho Chi Minh City</field>
+    </record>
+
+    <record id="demo_student_4" model="student_management.student">
+        <field name="student_code">STD00004</field>
+        <field name="name">Dang Thi Lan</field>
+        <field name="email">lan.dang@student.edu</field>
+        <field name="phone">0914444444</field>
+        <field name="date_of_birth">2004-01-30</field>
+        <field name="gender">female</field>
+        <field name="address">12 Vo Van Tan, District 3, Ho Chi Minh City</field>
+    </record>
+
+    <record id="demo_student_5" model="student_management.student">
+        <field name="student_code">STD00005</field>
+        <field name="name">Bui Quoc Huy</field>
+        <field name="email">huy.bui@student.edu</field>
+        <field name="phone">0915555555</field>
+        <field name="date_of_birth">2005-05-12</field>
+        <field name="gender">male</field>
+        <field name="address">90 Cach Mang Thang 8, District 10, Ho Chi Minh City</field>
+        <field name="active" eval="False"/>
+        <field name="note">On leave — inactive student for demo.</field>
+    </record>
+
+    <!-- Classrooms -->
+    <record id="demo_classroom_1" model="student_management.classroom">
+        <field name="name">Python K1 - Morning</field>
+        <field name="code">CLS-PY-K1</field>
+        <field name="course_id" ref="demo_course_1"/>
+        <field name="max_students">30</field>
+        <field name="start_date">2026-01-06</field>
+        <field name="end_date">2026-03-28</field>
+        <field name="student_ids" eval="[(6, 0, [
+            ref('demo_student_1'),
+            ref('demo_student_2'),
+            ref('demo_student_3'),
+        ])]"/>
+    </record>
+
+    <record id="demo_classroom_2" model="student_management.classroom">
+        <field name="name">English A1 - Evening</field>
+        <field name="code">CLS-EN-K1</field>
+        <field name="course_id" ref="demo_course_2"/>
+        <field name="max_students">25</field>
+        <field name="start_date">2026-02-03</field>
+        <field name="end_date">2026-04-25</field>
+        <field name="student_ids" eval="[(6, 0, [
+            ref('demo_student_2'),
+            ref('demo_student_4'),
+        ])]"/>
+    </record>
+
+    <record id="demo_classroom_3" model="student_management.classroom">
+        <field name="name">Odoo Dev - Batch 1</field>
+        <field name="code">CLS-ODOO-B1</field>
+        <field name="course_id" ref="demo_course_4"/>
+        <field name="max_students">20</field>
+        <field name="start_date">2026-03-01</field>
+        <field name="end_date">2026-06-15</field>
+        <field name="student_ids" eval="[(6, 0, [
+            ref('demo_student_1'),
+            ref('demo_student_3'),
+            ref('demo_student_4'),
+        ])]"/>
+    </record>
+
+    <!-- Enrollments -->
+    <record id="demo_enrollment_1" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_1"/>
+        <field name="course_id" ref="demo_course_1"/>
+        <field name="enrollment_date">2026-01-05</field>
+        <field name="status">completed</field>
+        <field name="grade">8.5</field>
+    </record>
+
+    <record id="demo_enrollment_2" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_1"/>
+        <field name="course_id" ref="demo_course_4"/>
+        <field name="enrollment_date">2026-02-28</field>
+        <field name="status">studying</field>
+        <field name="grade">7.0</field>
+    </record>
+
+    <record id="demo_enrollment_3" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_2"/>
+        <field name="course_id" ref="demo_course_2"/>
+        <field name="enrollment_date">2026-02-01</field>
+        <field name="status">studying</field>
+        <field name="grade">6.5</field>
+    </record>
+
+    <record id="demo_enrollment_4" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_2"/>
+        <field name="course_id" ref="demo_course_1"/>
+        <field name="enrollment_date">2026-01-05</field>
+        <field name="status">completed</field>
+        <field name="grade">9.0</field>
+    </record>
+
+    <record id="demo_enrollment_5" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_3"/>
+        <field name="course_id" ref="demo_course_3"/>
+        <field name="enrollment_date">2026-01-20</field>
+        <field name="status">completed</field>
+        <field name="grade">4.5</field>
+    </record>
+
+    <record id="demo_enrollment_6" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_3"/>
+        <field name="course_id" ref="demo_course_4"/>
+        <field name="enrollment_date">2026-03-01</field>
+        <field name="status">draft</field>
+    </record>
+
+    <record id="demo_enrollment_7" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_4"/>
+        <field name="course_id" ref="demo_course_2"/>
+        <field name="enrollment_date">2026-02-03</field>
+        <field name="status">studying</field>
+        <field name="grade">8.0</field>
+    </record>
+
+    <record id="demo_enrollment_8" model="student_management.enrollment">
+        <field name="student_id" ref="demo_student_4"/>
+        <field name="course_id" ref="demo_course_4"/>
+        <field name="enrollment_date">2026-03-01</field>
+        <field name="status">cancelled</field>
+    </record>
+
+</odoo>

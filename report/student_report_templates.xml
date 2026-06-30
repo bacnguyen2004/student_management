@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_student_card_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>Student Card</h2>
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Student Code</strong></td>
+                        <td><span t-field="student.student_code"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td><span t-field="student.name"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td><span t-field="student.email"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone</strong></td>
+                        <td><span t-field="student.phone"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gender</strong></td>
+                        <td><span t-field="student.gender"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of Birth</strong></td>
+                        <td><span t-field="student.date_of_birth"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Age</strong></td>
+                        <td><span t-field="student.age"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Enrolled Courses</strong></td>
+                        <td><span t-field="student.course_count"/></td>
+                    </tr>
+                </table>
+                <p t-if="student.address">
+                    <strong>Address:</strong>
+                    <span t-field="student.address"/>
+                </p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_student_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="student">
+                <t t-call="student_management.report_student_card_document"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_course_students_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>Student List by Course</h2>
+                <p>
+                    <strong>Course:</strong> <span t-field="course.name"/>
+                    (<span t-field="course.code"/>)
+                </p>
+                <p t-if="course.teacher_id">
+                    <strong>Teacher:</strong> <span t-field="course.teacher_id"/>
+                </p>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student Code</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Grade</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="course.enrollment_ids" t-as="enrollment">
+                            <td><span t-field="enrollment.student_id.student_code"/></td>
+                            <td><span t-field="enrollment.student_id.name"/></td>
+                            <td><span t-field="enrollment.student_email"/></td>
+                            <td><span t-field="enrollment.status"/></td>
+                            <td><span t-field="enrollment.grade"/></td>
+                            <td><span t-field="enrollment.result"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_course_students">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="course">
+                <t t-call="student_management.report_course_students_document"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_classroom_grades_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>Class Grade Report</h2>
+                <p>
+                    <strong>Class:</strong> <span t-field="classroom.name"/>
+                    (<span t-field="classroom.code"/>)
+                </p>
+                <p>
+                    <strong>Course:</strong> <span t-field="classroom.course_id"/>
+                </p>
+                <p t-if="classroom.teacher_id">
+                    <strong>Teacher:</strong> <span t-field="classroom.teacher_id"/>
+                </p>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student Code</th>
+                            <th>Name</th>
+                            <th>Grade</th>
+                            <th>Result</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="classroom.student_ids" t-as="student">
+                            <t t-set="enrollment" t-value="classroom.env['student_management.enrollment'].search([('student_id', '=', student.id), ('course_id', '=', classroom.course_id.id)], limit=1)"/>
+                            <td><span t-field="student.student_code"/></td>
+                            <td><span t-field="student.name"/></td>
+                            <td>
+                                <span t-if="enrollment" t-field="enrollment.grade"/>
+                                <span t-else="">-</span>
+                            </td>
+                            <td>
+                                <span t-if="enrollment" t-field="enrollment.result"/>
+                                <span t-else="">-</span>
+                            </td>
+                            <td>
+                                <span t-if="enrollment" t-field="enrollment.status"/>
+                                <span t-else="">Not enrolled</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_classroom_grades">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="classroom">
+                <t t-call="student_management.report_classroom_grades_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

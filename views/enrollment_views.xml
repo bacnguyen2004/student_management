@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_enrollment_list" model="ir.ui.view">
+        <field name="name">student_management.enrollment.list</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <list string="Enrollments"
+                  decoration-muted="status == 'cancelled'"
+                  decoration-success="status == 'completed'">
+                <field name="name" optional="hide"/>
+                <field name="student_id"/>
+                <field name="course_id"/>
+                <field name="teacher_id"/>
+                <field name="enrollment_date"/>
+                <field name="status"/>
+                <field name="grade"/>
+                <field name="result"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_enrollment_form" model="ir.ui.view">
+        <field name="name">student_management.enrollment.form</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <form string="Enrollment">
+                <header>
+                    <button name="action_start_studying"
+                            string="Start Studying"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="status != 'draft'"/>
+                    <button name="action_complete"
+                            string="Complete"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="status != 'studying'"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="status in ('completed', 'cancelled')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="status not in ('cancelled',)"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,studying,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1" invisible="not name"/>
+                            <field name="student_id"/>
+                            <field name="course_id"/>
+                            <field name="enrollment_date"/>
+                        </group>
+                        <group>
+                            <field name="student_email" readonly="1"/>
+                            <field name="teacher_id" readonly="1"/>
+                            <field name="course_fee" readonly="1"/>
+                            <field name="grade"/>
+                            <field name="result" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_enrollment_search" model="ir.ui.view">
+        <field name="name">student_management.enrollment.search</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="student_id"/>
+                <field name="course_id"/>
+                <field name="teacher_id"/>
+                <filter name="draft" string="Draft" domain="[('status','=','draft')]"/>
+                <filter name="studying" string="Studying" domain="[('status','=','studying')]"/>
+                <filter name="completed" string="Completed" domain="[('status','=','completed')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('status','=','cancelled')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_course" string="Course" context="{'group_by': 'course_id'}"/>
+                    <filter name="group_student" string="Student" context="{'group_by': 'student_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_enrollment_calendar" model="ir.ui.view">
+        <field name="name">student_management.enrollment.calendar</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <calendar string="Enrollments"
+                      date_start="enrollment_date"
+                      color="course_id"
+                      mode="month">
+                <field name="student_id"/>
+                <field name="course_id"/>
+                <field name="status"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_enrollment_graph" model="ir.ui.view">
+        <field name="name">student_management.enrollment.graph</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <graph string="Enrollment Grades" type="bar">
+                <field name="course_id"/>
+                <field name="grade" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_enrollment_pivot" model="ir.ui.view">
+        <field name="name">student_management.enrollment.pivot</field>
+        <field name="model">student_management.enrollment</field>
+        <field name="arch" type="xml">
+            <pivot string="Enrollment Analysis">
+                <field name="course_id" type="row"/>
+                <field name="status" type="col"/>
+                <field name="grade" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_enrollment" model="ir.actions.act_window">
+        <field name="name">Enrollments</field>
+        <field name="res_model">student_management.enrollment</field>
+        <field name="view_mode">list,form,calendar,graph,pivot</field>
+    </record>
+</odoo>
