@@ -5,16 +5,16 @@
         <field name="name">student_management.student.list</field>
         <field name="model">student_management.student</field>
         <field name="arch" type="xml">
-            <list>
+            <list decoration-muted="not active">
                 <field name="student_code"/>
                 <field name="name"/>
                 <field name="gender"/>
                 <field name="date_of_birth"/>
                 <field name="age"/>
                 <field name="course_count"/>
-                <field name="email"/>
-                <field name="phone"/>
-                <field name="active"/>
+                <field name="email" widget="email"/>
+                <field name="phone" widget="phone"/>
+                <field name="active" optional="hide"/>
             </list>
         </field>
     </record>
@@ -27,22 +27,34 @@
                 <field name="name"/>
                 <field name="student_code"/>
                 <field name="email"/>
+                <field name="phone"/>
                 <field name="gender"/>
                 <field name="active"/>
+                <field name="course_count"/>
                 <templates>
                     <t t-name="card">
-                        <div class="oe_kanban_global_click">
-                            <strong><field name="name"/></strong>
-                            <div t-if="record.student_code.raw_value">
-                                <field name="student_code"/>
+                        <div class="oe_kanban_global_click p-2">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <strong class="d-block"><field name="name"/></strong>
+                                    <span t-if="record.student_code.raw_value" class="text-muted">
+                                        <field name="student_code"/>
+                                    </span>
+                                </div>
+                                <span class="badge rounded-pill text-bg-primary">
+                                    <field name="course_count"/> courses
+                                </span>
                             </div>
-                            <div t-if="record.email.raw_value">
-                                <i class="fa fa-envelope" title="Email"/> <field name="email"/>
+                            <div class="mt-2 text-muted" t-if="record.email.raw_value">
+                                <i class="fa fa-envelope me-1" title="Email"/> <field name="email"/>
                             </div>
-                            <div t-if="record.gender.raw_value">
+                            <div class="text-muted" t-if="record.phone.raw_value">
+                                <i class="fa fa-phone me-1" title="Phone"/> <field name="phone"/>
+                            </div>
+                            <div class="mt-2" t-if="record.gender.raw_value">
                                 <field name="gender"/>
                             </div>
-                            <div t-if="!record.active.raw_value" class="text-danger">
+                            <div t-if="!record.active.raw_value" class="text-danger mt-1">
                                 Inactive
                             </div>
                         </div>
@@ -67,17 +79,24 @@
                         </button>
                     </div>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Student name"/>
+                        </h1>
+                        <h2 class="text-muted">
+                            <field name="student_code" readonly="1" placeholder="Auto-generated on save"/>
+                        </h2>
+                    </div>
                     <group>
                         <group>
-                            <field name="student_code" readonly="1" placeholder="Auto-generated on save"/>
-                            <field name="name"/>
                             <field name="gender"/>
                             <field name="date_of_birth"/>
                             <field name="age"/>
                         </group>
                         <group>
-                            <field name="email"/>
-                            <field name="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
                             <field name="active"/>
                         </group>
                     </group>
@@ -113,8 +132,10 @@
                 <filter name="female" string="Female" domain="[('gender','=','female')]"/>
                 <filter name="active" string="Active" domain="[('active','=',True)]"/>
                 <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+                <filter name="with_email" string="With Email" domain="[('email','!=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_gender" string="Gender" context="{'group_by': 'gender'}"/>
+                    <filter name="group_active" string="Archived" context="{'group_by': 'active'}"/>
                 </group>
             </search>
         </field>

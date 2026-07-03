@@ -1,48 +1,84 @@
-# Student Management — Odoo 18 Module
+# Student Management - Odoo 18 Module
 
 [![Odoo](https://img.shields.io/badge/Odoo-18.0-875A7B?logo=odoo&logoColor=white)](https://www.odoo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
-[![License](https://img.shields.io/badge/License-LGPL--3-blue.svg)](LICENSE)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Required-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![License](https://img.shields.io/badge/License-LGPL--3-blue.svg)](LICENSE)
 
-Odoo module for managing students, courses, teachers, classrooms, and enrollments.  
-Portfolio project demonstrating full-stack Odoo development: ORM, XML views, security, reports, mail, cron, and unit tests.
+Student Management is an Odoo 18 portfolio module for training centers. It manages students, teachers, courses, classrooms, enrollments, grades, PDF reports, email notifications, scheduled automation, and role-based access control.
 
 **Author:** Nguyen Van Bac
 
----
+## Highlights
 
-## Features
+| Area | Implementation |
+| --- | --- |
+| Core models | Student, Teacher, Course, Classroom, Enrollment |
+| Business flow | Enrollment workflow: Draft -> Studying -> Completed / Cancelled |
+| User interface | List, form, kanban, calendar, graph, pivot, search filters |
+| Data quality | Constraints, computed fields, normalized email/course codes |
+| Security | Teacher, Staff, Administrator groups; ACLs; enrollment record rules |
+| Automation | Student code sequence, email templates, daily cron job |
+| Productivity | Bulk enrollment wizard for registering multiple students |
+| Reporting | Student Card, Student List by Course, Class Grade Report |
+| Tests | TransactionCase tests for key business rules |
 
-| Area | Details |
-|------|---------|
-| **Models** | Student, Teacher, Course, Classroom, Enrollment |
-| **Views** | List, Form, Search, Kanban, Calendar, Graph, Pivot |
-| **Business logic** | Constraints, computed fields, workflow `draft → studying → completed` |
-| **Security** | Groups (Teacher / Staff / Administrator), ACL, record rules |
-| **Sequence** | Auto student code `STD00001` |
-| **Wizard** | Bulk enroll students into a course |
-| **Reports** | Student Card, Student List by Course, Class Grade Report (PDF) |
-| **Mail** | Email on enrollment start + teacher notification |
-| **Cron** | Auto-complete studying enrollments (90+ days with grade) |
-| **Dashboard** | Graph & pivot analysis of enrollments |
-| **Tests** | 15+ unit tests (`TransactionCase`) |
+## Business Workflow
 
----
+```text
+Create teachers
+-> Create courses
+-> Create students
+-> Enroll students into courses
+-> Start studying
+-> Enter grades
+-> Complete enrollments
+-> Print reports and analyze dashboards
+```
+
+Enrollment statuses:
+
+```text
+Draft -> Studying -> Completed
+Draft/Studying -> Cancelled -> Draft
+```
+
+## Key Features
+
+- Auto-generated student codes such as `STD00001`.
+- Duplicate enrollment prevention for the same student and course.
+- Grade validation from `0` to `10`.
+- Automatic Pass/Fail result based on grade.
+- Teacher notification when a new enrollment is created.
+- Student notification when an enrollment starts studying.
+- Daily cron that auto-completes studying enrollments older than 90 days if they already have a grade.
+- Portfolio-friendly backend UI with kanban cards, list decorations, calendar schedule, graph and pivot analysis.
 
 ## Screenshots
 
-> Add screenshots after installing the module: **Students → Kanban**, **Enrollments → Graph**, **Reports → Student Card**.
+Selected Odoo backend screens from the module demo database.
 
----
+| Students Kanban | Courses Kanban |
+| --- | --- |
+| ![Students Kanban](docs/screenshots/students-kanban.png) | ![Courses Kanban](docs/screenshots/courses-kanban.png) |
+
+| Enrollments List | Enrollment Form |
+| --- | --- |
+| ![Enrollments List](docs/screenshots/enrollments-list.png) | ![Enrollment Form](docs/screenshots/enrollment-form.png) |
+
+| Classes Calendar | Dashboard |
+| --- | --- |
+| ![Classes Calendar](docs/screenshots/classes-calendar.png) | ![Dashboard](docs/screenshots/dashboard-graph.png) |
+
+| Bulk Enroll Wizard | Student Card Report |
+| --- | --- |
+| ![Bulk Enroll Wizard](docs/screenshots/bulk-enroll-wizard.png) | ![Student Card Report](docs/screenshots/student-card-report.png) |
 
 ## Requirements
 
 - Odoo 18
 - Python 3.10+
 - PostgreSQL
-
----
 
 ## Installation
 
@@ -53,71 +89,62 @@ git clone https://github.com/bacnguyen2004/student_management.git custom_addons/
 # 2. Ensure addons_path includes custom_addons in odoo.conf
 # addons_path = addons,custom_addons
 
-# 3. Restart Odoo, then in UI:
-# Apps → Update Apps List → search "student_management" → Install
-# Optional: enable "Load demonstration data" for sample records
+# 3. Restart Odoo, update the apps list, then install the module
+# Apps -> Update Apps List -> search "student_management" -> Install
 ```
 
-Upgrade after code changes: **Apps → student_management → Upgrade**
+Optional: enable demo data to load sample students, teachers, courses, classrooms, and enrollments.
 
----
+Upgrade after code changes:
 
-## Security groups
+```text
+Apps -> student_management -> Upgrade
+```
+
+## Security Groups
 
 | Group | Access |
-|-------|--------|
-| Teacher | Read students/courses; manage own course enrollments |
-| Staff | CRUD all (no delete) |
-| Administrator | Full access |
+| --- | --- |
+| Teacher | Read core records and manage enrollments for their own courses |
+| Staff | Manage module records without delete permission |
+| Administrator | Full module access |
 
-Assign groups: **Settings → Users → Access Rights → Student Management**
+Teacher access depends on linking a teacher record to an Odoo user:
 
-Link teacher to user: **Teachers → User field** (required for enrollment record rules).
+```text
+Student Management -> Teachers -> User
+```
 
----
-
-## Run tests
+## Run Tests
 
 ```bash
 ./odoo-bin -c odoo.conf -d test_db -i student_management --test-enable --stop-after-init
 ```
 
----
+## Module Structure
 
-## Module structure
-
-```
+```text
 student_management/
-├── models/          # ORM models (5 models)
-├── views/           # XML views & menus
-├── wizard/          # TransientModel wizards
-├── report/          # QWeb PDF reports
-├── security/        # Groups, ACL, record rules
-├── data/            # Sequence, mail templates, cron
-├── demo/            # Demo data
-├── tests/           # Unit tests
-└── static/          # Module icon & description
+|-- models/          # ORM models and business logic
+|-- views/           # XML views, actions, menus, dashboards
+|-- wizard/          # TransientModel wizard for bulk enrollment
+|-- report/          # QWeb PDF report actions and templates
+|-- security/        # Groups, ACLs, and record rules
+|-- data/            # Sequence, mail templates, scheduled action
+|-- demo/            # Demo records for portfolio screenshots
+|-- tests/           # TransactionCase tests
+`-- static/          # Module icon and app description
 ```
 
----
+## Tech Stack
 
-## Tech stack (for CV / portfolio)
-
-- **Backend:** Python, Odoo ORM, constraints, computed fields, cron
-- **Frontend:** XML views (Kanban, Calendar, Graph, Pivot)
-- **Security:** `res.groups`, `ir.model.access`, record rules
-- **Reporting:** QWeb PDF templates
-- **Integration:** Mail templates (`mail` module)
+- **Backend:** Python, Odoo ORM, computed fields, constraints, scheduled actions
+- **Frontend:** Odoo XML views, kanban, calendar, graph, pivot, search views
+- **Security:** `res.groups`, `ir.model.access.csv`, `ir.rule`
+- **Reporting:** QWeb PDF reports
+- **Messaging:** `mail.template`, chatter, email queue integration
 - **Testing:** `odoo.tests.TransactionCase`
-
----
 
 ## License
 
-[LGPL-3.0](LICENSE) — Odoo Community compatible.
-
----
-
-## Author
-
-**Nguyen Van Bac** — Odoo Intern / Fresher portfolio project
+[LGPL-3.0](LICENSE)

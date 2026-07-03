@@ -4,7 +4,9 @@
         <field name="name">student_management.classroom.list</field>
         <field name="model">student_management.classroom</field>
         <field name="arch" type="xml">
-            <list string="Classes">
+            <list string="Classes"
+                  decoration-muted="not active"
+                  decoration-warning="max_students and student_count >= max_students">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="course_id"/>
@@ -13,8 +15,57 @@
                 <field name="end_date"/>
                 <field name="student_count"/>
                 <field name="max_students"/>
-                <field name="active"/>
+                <field name="active" optional="hide"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_classroom_kanban" model="ir.ui.view">
+        <field name="name">student_management.classroom.kanban</field>
+        <field name="model">student_management.classroom</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="course_id"/>
+                <field name="teacher_id"/>
+                <field name="student_count"/>
+                <field name="max_students"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <strong class="d-block"><field name="name"/></strong>
+                                    <span class="text-muted" t-if="record.code.raw_value">
+                                        <field name="code"/>
+                                    </span>
+                                </div>
+                                <span class="badge rounded-pill text-bg-primary">
+                                    <field name="student_count"/>/<field name="max_students"/>
+                                </span>
+                            </div>
+                            <div class="mt-2 text-muted" t-if="record.course_id.raw_value">
+                                <i class="fa fa-book me-1" title="Course"/> <field name="course_id"/>
+                            </div>
+                            <div class="text-muted" t-if="record.teacher_id.raw_value">
+                                <i class="fa fa-user me-1" title="Teacher"/> <field name="teacher_id"/>
+                            </div>
+                            <div class="mt-2 text-muted" t-if="record.start_date.raw_value">
+                                <i class="fa fa-calendar me-1" title="Schedule"/>
+                                <field name="start_date"/>
+                                <span t-if="record.end_date.raw_value"> - <field name="end_date"/></span>
+                            </div>
+                            <div t-if="!record.active.raw_value" class="text-danger mt-1">
+                                Archived
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 
@@ -25,10 +76,17 @@
             <form string="Class">
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Class name"/>
+                        </h1>
+                        <h2 class="text-muted">
+                            <field name="code" placeholder="Class code"/>
+                        </h2>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="code"/>
                             <field name="course_id"/>
                             <field name="teacher_id"/>
                         </group>
@@ -42,11 +100,28 @@
                     </group>
                     <notebook>
                         <page string="Students">
-                            <field name="student_ids"/>
+                            <field name="student_ids" widget="many2many_tags"/>
                         </page>
                     </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <record id="view_classroom_calendar" model="ir.ui.view">
+        <field name="name">student_management.classroom.calendar</field>
+        <field name="model">student_management.classroom</field>
+        <field name="arch" type="xml">
+            <calendar string="Class Schedule"
+                      date_start="start_date"
+                      date_stop="end_date"
+                      color="course_id"
+                      mode="month">
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="teacher_id"/>
+                <field name="student_count"/>
+            </calendar>
         </field>
     </record>
 
@@ -60,9 +135,12 @@
                 <field name="course_id"/>
                 <field name="teacher_id"/>
                 <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
+                <filter name="with_dates" string="Scheduled" domain="[('start_date','!=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_course" string="Course" context="{'group_by': 'course_id'}"/>
                     <filter name="group_teacher" string="Teacher" context="{'group_by': 'teacher_id'}"/>
+                    <filter name="group_start_date" string="Start Month" context="{'group_by': 'start_date:month'}"/>
                 </group>
             </search>
         </field>
@@ -71,6 +149,6 @@
     <record id="action_classroom" model="ir.actions.act_window">
         <field name="name">Classes</field>
         <field name="res_model">student_management.classroom</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
     </record>
 </odoo>

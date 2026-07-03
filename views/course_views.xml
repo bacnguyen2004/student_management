@@ -4,7 +4,23 @@
         <field name="name">student_management.course.list</field>
         <field name="model">student_management.course</field>
         <field name="arch" type="xml">
-            <list string="Courses">
+            <list string="Courses" decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="teacher_id"/>
+                <field name="fee"/>
+                <field name="duration"/>
+                <field name="student_count"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_course_kanban" model="ir.ui.view">
+        <field name="name">student_management.course.kanban</field>
+        <field name="model">student_management.course</field>
+        <field name="arch" type="xml">
+            <kanban>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="teacher_id"/>
@@ -12,7 +28,38 @@
                 <field name="duration"/>
                 <field name="student_count"/>
                 <field name="active"/>
-            </list>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <strong class="d-block"><field name="name"/></strong>
+                                    <span class="text-muted" t-if="record.code.raw_value">
+                                        <field name="code"/>
+                                    </span>
+                                </div>
+                                <span class="badge rounded-pill text-bg-primary">
+                                    <field name="student_count"/> students
+                                </span>
+                            </div>
+                            <div class="mt-2 text-muted" t-if="record.teacher_id.raw_value">
+                                <i class="fa fa-user me-1" title="Teacher"/> <field name="teacher_id"/>
+                            </div>
+                            <div class="d-flex gap-3 mt-2 text-muted">
+                                <span t-if="record.duration.raw_value">
+                                    <i class="fa fa-clock-o me-1" title="Duration"/> <field name="duration"/>h
+                                </span>
+                                <span t-if="record.fee.raw_value">
+                                    <i class="fa fa-money me-1" title="Fee"/> <field name="fee"/>
+                                </span>
+                            </div>
+                            <div t-if="!record.active.raw_value" class="text-danger mt-1">
+                                Archived
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 
@@ -38,10 +85,17 @@
                         </button>
                     </div>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Course name"/>
+                        </h1>
+                        <h2 class="text-muted">
+                            <field name="code" placeholder="Course code"/>
+                        </h2>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="code"/>
                             <field name="teacher_id"/>
                         </group>
                         <group>
@@ -75,8 +129,11 @@
                 <field name="code"/>
                 <field name="teacher_id"/>
                 <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
+                <filter name="has_teacher" string="Has Teacher" domain="[('teacher_id','!=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_teacher" string="Teacher" context="{'group_by': 'teacher_id'}"/>
+                    <filter name="group_active" string="Archived" context="{'group_by': 'active'}"/>
                 </group>
             </search>
         </field>
@@ -85,6 +142,6 @@
     <record id="action_course" model="ir.actions.act_window">
         <field name="name">Courses</field>
         <field name="res_model">student_management.course</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,kanban,form</field>
     </record>
 </odoo>
